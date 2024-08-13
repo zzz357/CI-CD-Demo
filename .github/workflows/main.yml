@@ -1,0 +1,42 @@
+# CI/CD 项目名称
+name: Node.js CI/CD
+
+on:
+  # 监听 push 和 PR 改动
+  push:
+    # 监听 main 分支
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # 构建
+  build:
+    # 运行环境
+    runs-on: ubuntu-latest
+
+    # 步骤
+    steps:
+      # 将代码仓库复制到工作目录，以便后续的步骤可以访问并操作这些文件
+      - name: 检出仓库
+        uses: actions/checkout@v3
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: 拉取依赖
+        run: npm install
+
+      - name: 打包项目
+        run: npm run build
+
+      # 将构建过程中生成的文件上传，以便在后续工作中继续使用
+      - name: 上传产品
+        uses: actions/upload-artifact@v3
+        with:
+          name: node-app
+          path: "dist/bundle.js"
